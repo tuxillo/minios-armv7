@@ -1,23 +1,48 @@
-#include <stdio.h>
+#include "boot.h"
+#include "subr.h"
 
-volatile unsigned int * const uart_base = (unsigned int *)0x09000000;
+const char *msg = "Hello world!\n";
+int myvar = 16;
+int foo;
 
+/*
 int
 task(void) {
 
 	return 0;
 }
+*/
 
 void
-print(char *s) {
+testargs(const char *s, int *a)
+{
+	const char *p;
+	int *p1;
 
-  while (*s != '\0')
-    *uart_base = (unsigned int)*s++;
+	p = s;
+	p1 = a;
 }
 
-void _start(void)
-{
-  char *msg = "Hello world!\n";
 
-  print(msg);
+int _start(void)
+{
+
+  _pc('h', NULL);
+  _pc('\n', NULL);
+  _pc('e', NULL);
+  _pc('\n', NULL);
+  _pc('l', NULL);
+  _pc('\n', NULL);
+  _pc('l', NULL);
+  _pc('\n', NULL);
+  _pc('o', NULL);
+  _pc('\n', NULL);
+
+  testargs(msg, &myvar);
+//  kprintf("%s", msg);
+
+  /* Loop forever */
+  for(;;);
+
+  return 0;
 }
