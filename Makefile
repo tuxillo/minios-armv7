@@ -1,3 +1,4 @@
+# Makefile for minios-armv7
 TOOLCHAIN?= arm-none-eabi-
 
 CC=${TOOLCHAIN}gcc
