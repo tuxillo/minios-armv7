@@ -1,6 +1,10 @@
 #include "boot.h"
 #include "subr.h"
 
+extern void *__bss_start;
+extern void *__bss_end__;
+extern void *_stack;
+
 const char *msg = "Hello world!\n";
 int myvar = 16;
 int foo;
@@ -12,6 +16,17 @@ task(void) {
 	return 0;
 }
 */
+
+void
+clearbss(void)
+{
+	unsigned int *start = (unsigned int *)&__bss_start;
+	unsigned int *end = (unsigned int *)&__bss_end__;
+	unsigned int *p;
+
+	for (p = start; p < end; p++)
+		*p = 0x0;
+}
 
 void
 testargs(const char *s, int *a)
@@ -27,22 +42,12 @@ testargs(const char *s, int *a)
 int _start(void)
 {
 
-  _pc('h', NULL);
-  _pc('\n', NULL);
-  _pc('e', NULL);
-  _pc('\n', NULL);
-  _pc('l', NULL);
-  _pc('\n', NULL);
-  _pc('l', NULL);
-  _pc('\n', NULL);
-  _pc('o', NULL);
-  _pc('\n', NULL);
+	clearbss();
+	testargs("hello", &myvar);
+	*uart_base = (int)'H';
 
-  testargs(msg, &myvar);
-//  kprintf("%s", msg);
-
-  /* Loop forever */
-  for(;;);
+	/* Loop forever */
+	for(;;);
 
   return 0;
 }

@@ -23,6 +23,6 @@ run: boot.elf
                 boot.elf -display none
 
 gdb: boot.elf
-	qemu-system-arm -S -s -serial stdio\
+	qemu-system-arm -S -s -singlestep -serial stdio\
                 -M virt -cpu cortex-a15 -m 256 -kernel \
                 boot.elf -display none
