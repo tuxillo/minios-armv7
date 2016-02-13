@@ -3,7 +3,10 @@
 
 extern void *__bss_start;
 extern void *__bss_end__;
-extern void *_stack;
+uint8_t __stack[512] __attribute__((aligned(4), section(".stack")));
+
+void kern_boot(void);
+void _start(void) __attribute__ ( ( naked ) );
 
 const char *msg = "Hello world!\n";
 int myvar = 16;
@@ -25,7 +28,7 @@ clearbss(void)
 	unsigned int *p;
 
 	for (p = start; p < end; p++)
-		*p = 0x0;
+		*p = 0x00;
 }
 
 void
@@ -38,16 +41,24 @@ testargs(const char *s, int *a)
 	p1 = a;
 }
 
-
-int _start(void)
+void
+_start(void)
 {
 
+	asm volatile("ldr sp, =0x80200");
+
 	clearbss();
-	testargs("hello", &myvar);
+
+	kern_boot();
+}
+
+void
+kern_boot(void)
+{
+	//testargs("hello", &myvar);
 	*uart_base = (int)'H';
 
 	/* Loop forever */
+	//kprintf("Hello");
 	for(;;);
-
-  return 0;
 }

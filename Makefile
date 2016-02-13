@@ -7,6 +7,7 @@ CFLAGS+= -g -O0
 CFLAGS+= -nodefaultlibs
 CFLAGS+= -nostartfiles
 CFLAGS+= -nostdlib
+#CFLAGS+= -fPIE
 #CFLAGS+= -Wall
 CFLAGS+= -mcpu=cortex-a15
 boot.elf: subr_prf.o boot.o
