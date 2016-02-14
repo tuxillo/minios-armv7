@@ -38,6 +38,11 @@ testargs(const char *s, int *a)
 	int *p1;
 
 	p = s;
+	if (s == NULL)
+		*uart_base = (int)'0';
+	else
+		*uart_base = (int)'1';
+
 	p1 = a;
 }
 
@@ -55,10 +60,8 @@ _start(void)
 void
 kern_boot(void)
 {
-	//testargs("hello", &myvar);
-	*uart_base = (int)'H';
+	testargs("hello", &myvar);
 
 	/* Loop forever */
-	//kprintf("Hello");
 	for(;;);
 }
