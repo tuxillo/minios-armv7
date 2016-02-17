@@ -21,8 +21,11 @@ SECTIONS
 	}
 	.bss :
 	{
+	     __bss_start = .;
+	     *(.sbss.*)
 	     *(.bss*)
 	     *(COMMON)
+	     __bss_end = .;
 	}
 	. = . + 0x1000; /* 4kB for stack */
 	stack_top = .;

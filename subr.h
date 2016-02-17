@@ -1,32 +1,9 @@
 #ifndef _SUBR_H
 #define _SUBR_H
 #include <stdarg.h>
+#include <types.h>
 
-#define NULL ((void *)0)
-
-typedef unsigned char u_char;
 #define MAXNBUF	256
-
-typedef unsigned short	u_short;
-typedef unsigned long	u_long;
-typedef unsigned int	u_int;
-typedef	long int	intptr_t;
-typedef	long unsigned int	uintptr_t;
-typedef long unsigned int	size_t;
-typedef long int		ssize_t;
-typedef long int	intmax_t;
-typedef long unsigned int	uintmax_t;
-typedef intptr_t	ptrdiff_t;
-typedef unsigned long	uint64_t;
-typedef long		int64_t;
-typedef unsigned int	uint32_t;
-typedef int		int32_t;
-typedef unsigned short	uint16_t;
-typedef short		int16_t;
-typedef unsigned char	uint8_t;
-typedef char		int8_t;
-typedef uint64_t	u_int64_t;
-typedef uint64_t	quad_t;
 
 #define hex2ascii(hex) (hex2ascii_data[hex])
 extern char const hex2ascii_data[];
@@ -36,7 +13,6 @@ extern char const hex2ascii_data[];
 #define	HD_OMIT_COUNT	(1 << 16)
 #define	HD_OMIT_HEX	(1 << 17)
 #define	HD_OMIT_CHARS	(1 << 18)
-
 
 #define isspace(c)	((c) == ' ' || ((c) >= '\t' && (c) <= '\r'))
 #define isascii(c)	(((c) & ~0x7f) == 0)
@@ -51,8 +27,6 @@ extern char const hex2ascii_data[];
 
 #define toupper(c)	((c) - 0x20 * (((c) >= 'a') && ((c) <= 'z')))
 #define tolower(c)	((c) + 0x20 * (((c) >= 'A') && ((c) <= 'Z')))
-
-
 
 static __inline int imax(int a, int b) { return (a > b ? a : b); }
 static __inline int imin(int a, int b) { return (a < b ? a : b); }

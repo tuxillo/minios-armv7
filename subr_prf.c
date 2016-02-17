@@ -47,7 +47,7 @@ struct snprintf_arg {
 
 
 void
-_pc(int c, void *arg)
+_putchar(int c, void *arg)
 {
 	*uart_base = (int)c;
 }
@@ -80,7 +80,7 @@ kvprintf(const char *fmt, va_list ap)
 {
 	int retval;
 
-	retval = kvcprintf(fmt, _pc, NULL, 10, ap);
+	retval = kvcprintf(fmt, _putchar, NULL, 10, ap);
 
 	return (retval);
 }

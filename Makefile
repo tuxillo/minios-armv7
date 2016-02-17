@@ -3,6 +3,7 @@ TOOLCHAIN?= arm-none-eabi-
 
 CC=${TOOLCHAIN}gcc
 
+CFLAGS+= -I.
 CFLAGS+= -g -O0
 CFLAGS+= -nodefaultlibs
 CFLAGS+= -nostartfiles
