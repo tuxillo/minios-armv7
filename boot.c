@@ -2,21 +2,28 @@
 #include <subr.h>
 #include <cpufunc.h>
 
+int a;
+int b;
+int c;
+
+extern unsigned int *__bss_start;
+extern unsigned int *__bss_end;
+
 void kern_boot(void);
-void clearbss(int);
+void clearbss(void);
 
-void clearbss(int show)
+void clearbss(void)
 {
-	extern unsigned int *__bss_start;
-	extern unsigned int *__bss_end;
-	unsigned int *start, *end, *p;
+	unsigned int *start = (unsigned int *)&__bss_start;
+	unsigned int *end = (unsigned int *)&__bss_end;
+	unsigned int *p;
 
-	for (p = start; p < end; p++) {
-		if (show)
-			kprintf("0x%x ", *p);
+	kprintf("clearing bss...");
+
+	for (p = start; p < end; p++)
 		*p = 0x00;
-	}
-	kprintf("\n");
+
+	kprintf("done\n");
 }
 
 void
@@ -26,10 +33,7 @@ kern_boot(void)
 	kprintf("miniOS arvm7 startup ...\n");
 
 	/* Startup */
-	kprintf("Clearing bss section");
-	clearbss(TRUE);
-
-	kprintf("cpsr=0x%x\n", _read_cpsr());
+	clearbss();
 
 	/* Loop forever */
 	for(;;);

@@ -3,7 +3,7 @@
 
 #include <types.h>
 
-uint32_t __inline
+static __inline uint32_t
 _read_cpsr(void)
 {
 	uint32_t r;

@@ -1,14 +1,11 @@
-ENTRY(_startup)
+ENTRY(_reset)
 SECTIONS
 {
 
-	/*
-	 * For qemu -M virt memory starts at 0x40000000.
-	 * More details on hw/arm/virt.c file of qemu.
-	 */
-	 . = 0x40000000;
+	 . = 0x8000;
 	.text :
 	{
+	      *(.text.boot)
 	      *(.text)
 	}
 	.rodata :

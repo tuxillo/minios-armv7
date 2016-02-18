@@ -36,7 +36,7 @@
 #include <stdarg.h>
 #include "subr.h"
 
-volatile unsigned int * const uart_base = (unsigned int *)0x09000000;
+volatile unsigned int * const uart_base = (unsigned int *)0x3f201000;
 
 char const hex2ascii_data[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
