@@ -1,3 +1,4 @@
 boot.elf
+boot.bin
 *.o
 *~
