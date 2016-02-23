@@ -49,7 +49,7 @@ _startup:
 	 * SCTLR.V = 1 High Exceptions Vector, can't remap.
 	 */
 	mrc p15, 0, r0, c1, c0, 0	@ Read SCTLR into R0
-	bic r0, #(1 << 13)		@ Bit clear V
+	bic r0, #(1 << 13)		@ Set SCTLR.V to 0
 	mcr p15, 0, r0, c1, c0, 0	@ Write SCTLR
 
 	/*
@@ -61,6 +61,6 @@ _startup:
 	ldr r0, =_reset
 	mcr p15, 0, r0, c12, c0, 0
 
-	/* Set stack pointer */
-	ldr sp, =stack_top
+	/* Set kernel stack pointer */
+	ldr sp, =kernstack_top
 	bl kern_boot
