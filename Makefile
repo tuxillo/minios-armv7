@@ -10,8 +10,10 @@ OBJCOPY=${TOOLCHAIN}objcopy
 # RPi2 has an ARMv7-A Cortex-A7 processor with VFPv4 Floating-point.
 #
 # Debug symbols with no optimisations for predictable ASM code generation.
+# Force generating code in ARM state
 #
 CFLAGS+= -mcpu=cortex-a7
+CFLAGS+= -marm
 CFLAGS+= -g -O0
 
 # Standalone, no libs no start objects.
@@ -23,15 +25,19 @@ CFLAGS+= -nostdlib
 # Object files
 OBJFILES+= boot.o
 OBJFILES+= startup.o
+OBJFILES+= exception.o
 OBJFILES+= subr_prf.o
+OBJFILES+= user.o
 
 boot.bin: boot.elf
 	$(OBJCOPY) -O binary boot.elf boot.bin
 
-boot.elf: clean subr_prf.o boot.o startup.o
+boot.elf: clean subr_prf.o boot.o startup.o user.o
 	$(CC) -c subr_prf.c $(CFLAGS)
+	$(CC) -c user.c $(CFLAGS)
 	$(CC) -c boot.c $(CFLAGS) boot.c
 	$(AS) startup.S -o startup.o
+	$(AS) exception.S -o exception.o
 	$(LD) -T boot.ld -nodefaultlibs -nostdlib \
 			${OBJFILES} -o boot.elf
 uboot: boot.elf
@@ -52,5 +58,5 @@ run: boot.bin
 
 gdb: boot.bin
 	qemu-system-arm -S -s -singlestep -serial stdio\
-                -M virt -cpu cortex-a15 -m 256 -kernel \
+                -M raspi2 -m 256 -kernel \
                 boot.elf -display none

@@ -27,42 +27,27 @@
  * either expressed or implied, of the author.
  */
 
-#include <types.h>
-#include <subr.h>
-#include <cpufunc.h>
+	.global _e_undef
+	.global _e_svc
+	.global _e_pref_abort
+	.global _e_data_abort
+	.global _e_irq
+	.global _e_fiq
 
-int a;
-int b;
-int c;
+_e_undef:
+	bl .
 
-extern unsigned int *__bss_start;
-extern unsigned int *__bss_end;
+_e_svc:
+	bl .
 
-void kern_boot(void);
-void clearbss(void);
+_e_pref_abort:
+	bl .
 
-void clearbss(void)
-{
-	unsigned int *start = (unsigned int *)&__bss_start;
-	unsigned int *end = (unsigned int *)&__bss_end;
-	unsigned int *p;
+_e_data_abort:
+	bl .
 
-	kprintf("clearing bss...");
+_e_irq:
+	bl .
 
-	for (p = start; p < end; p++)
-		*p = 0x00;
-
-	kprintf("done\n");
-}
-
-void
-kern_boot(void)
-{
-
-	kprintf("miniOS arvm7 startup ...\n");
-
-	/* Startup */
-	clearbss();
-	/* Switch to user mode */
-	_gouser();
-}
+_e_fiq:
+	bl .

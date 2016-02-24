@@ -29,16 +29,17 @@
 
 	.section .text.boot, "x"
 	.global _reset
+	.global _gouser
 
 _reset:
 	b _startup	/* 0x00 Reset */
-	b .		/* 0x04 Undefined instruction */
-	b .		/* 0x08 Supervisor call */
-	b .		/* 0x0c Prefetch abort */
-	b .		/* 0x10 Data abort */
+	b _e_undef	/* 0x04 Undefined instruction */
+	b _e_svc	/* 0x08 Supervisor call */
+	b _e_pref_abort	/* 0x0c Prefetch abort */
+	b _e_data_abort	/* 0x10 Data abort */
 	b .		/* 0x14 Unused */
-	b .		/* 0x18 IRQ Interrupt */
-	b .		/* 0x1c FIQ Interrupt */
+	b _e_irq	/* 0x18 IRQ Interrupt */
+	b _e_fiq	/* 0x1c FIQ Interrupt */
 
 _startup:
 	/*
@@ -64,3 +65,21 @@ _startup:
 	/* Set kernel stack pointer */
 	ldr sp, =kernstack_top
 	bl kern_boot
+
+_gouser:
+
+	/*
+	 * Steps to do an exception return to PL0 user.
+	 * - Read CPSR into a r0
+	 * - Set CPSR.M to user mode in r0
+	 * - Write r0 to SPSR
+	 * - Change lr to point to our userland function
+	 * - Modify pc by using subs
+	 */
+	mrs r0, cpsr
+	lsr r0, r0, #5
+	lsl r0, r0, #5
+	orr r0, r0, #0xd0
+	msr spsr, r0
+	ldr lr, =usermode
+	subs pc, lr, #0
