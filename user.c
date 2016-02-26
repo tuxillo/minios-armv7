@@ -28,10 +28,12 @@
  */
 
 #include <types.h>
+#include <cpufunc.h>
+#include <syscalls.h>
 #include <subr.h>
 
 void
 usermode(void)
 {
-	for (;;);
+	syscall_entry(SYSCALL_DUMMY);
 }

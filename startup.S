@@ -43,6 +43,18 @@ _reset:
 
 _startup:
 	/*
+	 * B1.3.3 Program Status Registers (PSRs)
+	 *
+	 * On reset the SPSRs are in status UNKNOWN.
+	 *
+	 * B9.3.2 CPS (ARM)
+	 * Change Processor State instruction to enable/disable
+	 * IRQ or change to a different mode.
+	 *
+	 */
+	cpsid if	@ Disable IRQ/FIQ
+
+	/*
 	 * B4.1.130 SCTLR, System Control register
 	 *
 	 * Vectors Bit

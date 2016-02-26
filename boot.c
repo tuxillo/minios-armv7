@@ -31,10 +31,6 @@
 #include <subr.h>
 #include <cpufunc.h>
 
-int a;
-int b;
-int c;
-
 extern unsigned int *__bss_start;
 extern unsigned int *__bss_end;
 
@@ -47,12 +43,10 @@ void clearbss(void)
 	unsigned int *end = (unsigned int *)&__bss_end;
 	unsigned int *p;
 
-	kprintf("clearing bss...");
-
+	/* Not efficient */
 	for (p = start; p < end; p++)
 		*p = 0x00;
 
-	kprintf("done\n");
 }
 
 void
@@ -63,6 +57,7 @@ kern_boot(void)
 
 	/* Startup */
 	clearbss();
+
 	/* Switch to user mode */
 	_gouser();
 }

@@ -38,6 +38,9 @@ _e_undef:
 	bl .
 
 _e_svc:
+	mov r1, r0		@ Move syscall no. to r1
+	ldr r0, =syscall_text	@ Load format string
+	bl kprintf
 	bl .
 
 _e_pref_abort:
@@ -51,3 +54,6 @@ _e_irq:
 
 _e_fiq:
 	bl .
+
+syscall_text:
+	.asciz "Syscall %d used!\n"

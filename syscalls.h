@@ -27,25 +27,11 @@
  * either expressed or implied, of the author.
  */
 
-#ifndef _CPUFUNC_H_
-#define _CPUFUNC_H_
+#ifndef _SYSCALLS_H_
+#define _SYSCALLS_H_
 
 #include <types.h>
 
-static __inline uint32_t
-_read_cpsr(void)
-{
-	uint32_t r;
+#define SYSCALL_DUMMY	0x1
 
-	__asm __volatile("mrs %0, cpsr" : "=r" (r));
-
-	return r;
-}
-
-static __inline void
-syscall_entry(int syscall)
-{
-	__asm __volatile("svc #0x0");
-}
-
-#endif /* _CPUFUNC_H_ */
+#endif /* _SYSCALLS_H_ */
