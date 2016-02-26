@@ -53,7 +53,7 @@ void
 kern_boot(void)
 {
 
-	kprintf("miniOS arvm7 startup ...\n");
+	kprintf("miniOS ARMv7 startup ...\n");
 
 	/* Startup */
 	clearbss();
