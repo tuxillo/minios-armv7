@@ -56,4 +56,4 @@ _e_fiq:
 	bl .
 
 syscall_text:
-	.asciz "Syscall %d used!\n"
+	.asciz "[svc] Syscall %d used!\n"

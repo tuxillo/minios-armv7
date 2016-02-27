@@ -79,19 +79,16 @@ _startup:
 	bl kern_boot
 
 _gouser:
-
 	/*
-	 * Steps to do an exception return to PL0 user.
-	 * - Read CPSR into a r0
-	 * - Set CPSR.M to user mode in r0
-	 * - Write r0 to SPSR
-	 * - Change lr to point to our userland function
-	 * - Modify pc by using subs
+	 * B1.3.2 ARM core registers
+	 *
+	 * Since System mode doesn't have its own registers for
+	 * SP, LR it shares them with User mode.
 	 */
-	mrs r0, cpsr
-	lsr r0, r0, #5
-	lsl r0, r0, #5
-	orr r0, r0, #0xd0
-	msr spsr, r0
-	ldr lr, =usermode
-	subs pc, lr, #0
+	msr spsr_cxsf, #0	@ Reset SPSR
+	msr cpsr_c, #0x1f	@ Switch to System mode
+	ldr sp, =usrstack_top	@ Set stack for user/sys mode
+	msr cpsr_c, #0xd3	@ Switch to svc mode
+	msr spsr_c, #0x10	@ User mode for the exception return
+	ldr lr, =usermode	@ Userland function to switch to
+	subs pc, lr, #0		@ Exception return

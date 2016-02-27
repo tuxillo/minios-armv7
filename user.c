@@ -35,5 +35,6 @@
 void
 usermode(void)
 {
+	kprintf("[usr] calling svc with syscall %d\n", SYSCALL_DUMMY);
 	syscall_entry(SYSCALL_DUMMY);
 }
