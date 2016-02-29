@@ -43,9 +43,18 @@ _read_cpsr(void)
 }
 
 static __inline void
-syscall_entry(int syscall)
+syscall_entry(int syscall, void *arg)
 {
 	__asm __volatile("svc #0x0");
+}
+
+static void
+DELAY(uint32_t usec)
+{
+	int counts;
+	for (; usec > 0; usec--)
+		for (counts = 200; counts > 0; counts--)
+			;
 }
 
 #endif /* _CPUFUNC_H_ */

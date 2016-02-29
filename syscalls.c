@@ -28,69 +28,35 @@
  */
 
 #include <types.h>
-#include <subr.h>
 #include <cpufunc.h>
 #include <syscalls.h>
-#include <thread.h>
-
-extern unsigned int *__bss_start;
-extern unsigned int *__bss_end;
-
-void kern_boot(void);
-void clearbss(void);
-void usermode(void);
-
-void clearbss(void)
-{
-	unsigned int *start = (unsigned int *)&__bss_start;
-	unsigned int *end = (unsigned int *)&__bss_end;
-	unsigned int *p;
-
-	/* Not efficient */
-	for (p = start; p < end; p++)
-		*p = 0x00;
-
-}
+#include <subr.h>
 
 int
-proc1(void *arg)
+syscall_handler(int syscall, void *arg)
 {
-	for(;;) {
-		kprintf("[usr] running process 1\n");
-		DELAY(500000);
-		syscall_entry(SYS_YIELD, NULL);
-		kprintf("[usr] again process 1\n");
+	static int cycle = 0;
+
+	switch(syscall) {
+	case SYS_RET:
+		run_threads();
+		break;
+	case SYS_DUMMY:
+		kprintf("[svc] Called SYS_DUMMY\n");
+		break;
+	case SYS_THREAD:
+		thread_create(arg);
+		break;
+	case SYS_YIELD:
+		if (cycle == 0)
+			return cycle++;
+		else if (cycle == 1)
+			return cycle--;
+		break;
+	default:
+		kprintf("[svc] Invalid syscall %d\n", syscall);
+		break;
 	}
+
 	return 0;
-}
-
-int
-proc2(void *arg)
-{
-	for(;;) {
-		kprintf("[usr] running process 2\n");
-		DELAY(500000);
-		syscall_entry(SYS_YIELD, NULL);
-		kprintf("[usr] again process 2\n");
-	}
-	return 0;
-}
-
-void
-kern_boot(void)
-{
-
-	kprintf("miniOS ARMv7 startup ...\n");
-
-	/* Startup */
-	clearbss();
-
-	thread_create(proc1);
-	thread_create(proc2);
-
-	/* Run all user mode threads */
-	run_threads();
-
-	/* Loop forever */
-	for (;;);
 }

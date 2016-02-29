@@ -84,11 +84,23 @@ _gouser:
 	 *
 	 * Since System mode doesn't have its own registers for
 	 * SP, LR it shares them with User mode.
-	 */
-	msr spsr_cxsf, #0	@ Reset SPSR
+	*/
+	stmfd sp!, {r0-r11,ip,lr}
+
 	msr cpsr_c, #0x1f	@ Switch to System mode
+	cmp r1, #0		@ Check if stack passed
+	bne _load_custom_stack	@ Set another stack if one is passed
 	ldr sp, =usrstack_top	@ Set stack for user/sys mode
+	bl  _swi
+
+_load_custom_stack:
+	mov sp, r1		@ Set a thread stack
+
+_swi:
 	msr cpsr_c, #0xd3	@ Switch to svc mode
+	mrs r4, cpsr		@ For saving SPSR
+	msr spsr, r4		@ Read in CSPR to SPSR for manipulation
 	msr spsr_c, #0x10	@ User mode for the exception return
-	ldr lr, =usermode	@ Userland function to switch to
+	mov lr, r0		@ Userland function to switch to
 	subs pc, lr, #0		@ Exception return
+

@@ -31,10 +31,15 @@
 #include <cpufunc.h>
 #include <syscalls.h>
 #include <subr.h>
+#include <thread.h>
 
 void
 usermode(void)
 {
-	kprintf("[usr] calling svc with syscall %d\n", SYSCALL_DUMMY);
-	syscall_entry(SYSCALL_DUMMY);
+	kprintf("[usr] calling svc with syscall %d\n", SYS_DUMMY);
+/*	syscall_entry(SYS_DUMMY, NULL);
+	syscall_entry(SYS_THREAD, proc1);
+	syscall_entry(SYS_THREAD, proc2);
+	syscall_entry(SYS_RET, NULL);
+*/
 }

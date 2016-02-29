@@ -32,6 +32,9 @@
 
 #include <types.h>
 
-#define SYSCALL_DUMMY	0x1
+#define SYS_RET		0x0
+#define SYS_DUMMY	0x1
+#define SYS_THREAD	0x2
+#define SYS_YIELD	0x3
 
 #endif /* _SYSCALLS_H_ */

@@ -35,13 +35,22 @@
 	.global _e_fiq
 
 _e_undef:
+	ldr r0, =undef_text
+	bl kprintf
 	bl .
 
 _e_svc:
-	mov r1, r0		@ Move syscall no. to r1
-	ldr r0, =syscall_text	@ Load format string
-	bl kprintf
-	bl .
+	msr cpsr_c, #0x1f	@ Switch to system mode
+	mov r5, lr		@ Save LR of the user thread
+	msr cpsr_c, #0xd3
+	bl  syscall_handler
+	cmp r0, #1
+	beq ret_svc
+	mov lr, r5
+	subs pc, lr, #0
+ret_svc:
+	ldmfd sp!, {r0-r11, ip,lr}
+	bx lr
 
 _e_pref_abort:
 	bl .
@@ -57,3 +66,6 @@ _e_fiq:
 
 syscall_text:
 	.asciz "[svc] Syscall %d used!\n"
+
+undef_text:
+	.asciz "[und] Undefined exception %p\n"

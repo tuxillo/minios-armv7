@@ -28,6 +28,8 @@ OBJFILES+= startup.o
 OBJFILES+= exception.o
 OBJFILES+= subr_prf.o
 OBJFILES+= user.o
+OBJFILES+= thread.o
+OBJFILES+= syscalls.o
 
 boot.bin: boot.elf
 	$(OBJCOPY) -O binary boot.elf boot.bin
@@ -35,7 +37,9 @@ boot.bin: boot.elf
 boot.elf: clean subr_prf.o boot.o startup.o user.o
 	$(CC) -c subr_prf.c $(CFLAGS)
 	$(CC) -c user.c $(CFLAGS)
-	$(CC) -c boot.c $(CFLAGS) boot.c
+	$(CC) -c boot.c $(CFLAGS)
+	$(CC) -c thread.c $(CFLAGS)
+	$(CC) -c syscalls.c $(CFLAGS)
 	$(AS) startup.S -o startup.o
 	$(AS) exception.S -o exception.o
 	$(LD) -T boot.ld -nodefaultlibs -nostdlib \
