@@ -32,6 +32,7 @@
 #include <cpufunc.h>
 #include <syscalls.h>
 #include <thread.h>
+#include <uart.h>
 
 extern unsigned int *__bss_start;
 extern unsigned int *__bss_end;
@@ -84,6 +85,9 @@ kern_boot(void)
 
 	/* Startup */
 	clearbss();
+
+	/* Initialize UART */
+	uart_pl011_init(115200, 8, 1, 0);
 
 	thread_create(proc1);
 	thread_create(proc2);

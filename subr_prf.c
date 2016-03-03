@@ -34,9 +34,9 @@
  *	@(#)subr_prf.c	8.3 (Berkeley) 1/21/94
  */
 #include <stdarg.h>
-#include "subr.h"
+#include <uart.h>
+#include <subr.h>
 
-volatile unsigned int * const uart_base = (unsigned int *)0x3f201000;
 
 char const hex2ascii_data[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -44,13 +44,6 @@ struct snprintf_arg {
 	char	*str;
 	size_t	remain;
 };
-
-
-void
-_putchar(int c, void *arg)
-{
-	*uart_base = (int)c;
-}
 
 size_t
 strlen(const char *str)
@@ -80,7 +73,7 @@ kvprintf(const char *fmt, va_list ap)
 {
 	int retval;
 
-	retval = kvcprintf(fmt, _putchar, NULL, 10, ap);
+	retval = kvcprintf(fmt, uart_pl011_putc, NULL, 10, ap);
 
 	return (retval);
 }
