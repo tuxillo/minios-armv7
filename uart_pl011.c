@@ -24,6 +24,7 @@
  * SUCH DAMAGE.
  */
 
+#include <subr.h>
 #include <types.h>
 
 /* PL011 UART registers and masks*/
@@ -160,6 +161,8 @@ void
 uart_pl011_init(int baudrate, int databits, int stopbits,
     int parity)
 {
+	kprintf("Initialising PrimeCell UART (PL011)\n");
+
 	/* Mask all interrupts */
 	__uart_setreg(uart_base, UART_IMSC, __uart_getreg(uart_base, UART_IMSC) &
 	    ~IMSC_MASK_ALL);
