@@ -51,6 +51,7 @@ typedef char		int8_t;
 typedef uint64_t	u_int64_t;
 typedef uint64_t	quad_t;
 typedef int		bool;
+typedef int32_t		register_t;
 
 #define NULL ((void *)0)
 
