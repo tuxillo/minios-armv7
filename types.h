@@ -50,6 +50,7 @@ typedef unsigned char	uint8_t;
 typedef char		int8_t;
 typedef uint64_t	u_int64_t;
 typedef uint64_t	quad_t;
+typedef int		bool;
 
 #define NULL ((void *)0)
 
