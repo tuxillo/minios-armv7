@@ -36,6 +36,7 @@
 
 _e_undef:
 	ldr r0, =undef_text
+	mov r1, lr
 	bl kprintf
 	bl .
 
@@ -59,6 +60,9 @@ _e_data_abort:
 	bl .
 
 _e_irq:
+	ldr r0, =irq_text
+	mov r1, lr
+	bl kprintf
 	bl .
 
 _e_fiq:
@@ -69,3 +73,5 @@ syscall_text:
 
 undef_text:
 	.asciz "[und] Undefined exception %p\n"
+irq_text:
+	.asciz "[irq] IRQ exception %p\n"

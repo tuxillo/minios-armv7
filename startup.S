@@ -103,4 +103,3 @@ _swi:
 	msr spsr_c, #0x10	@ User mode for the exception return
 	mov lr, r0		@ Userland function to switch to
 	subs pc, lr, #0		@ Exception return
-

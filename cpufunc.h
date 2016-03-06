@@ -127,6 +127,18 @@ cp15_cntkctl_set(register_t reg)
 	__asm __volatile("mcr p15, 0, %0, c14, c1, 0" :: "r" (reg));
 }
 
+static __inline void
+enable_irq(void)
+{
+	__asm __volatile("cpsie i" ::);
+}
+
+static __inline void
+enable_fiq(void)
+{
+	__asm __volatile("cpsie f" ::);
+}
+
 static __inline register_t
 _read_cpsr(void)
 {
@@ -141,15 +153,6 @@ static __inline void
 syscall_entry(int syscall, void *arg)
 {
 	__asm __volatile("svc #0x0");
-}
-
-static void
-DELAY(uint32_t usec)
-{
-	int counts;
-	for (; usec > 0; usec--)
-		for (counts = 200; counts > 0; counts--)
-			;
 }
 
 #endif /* _CPUFUNC_H_ */
