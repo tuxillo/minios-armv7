@@ -26,6 +26,7 @@
 
 #include <subr.h>
 #include <types.h>
+#include <bcm2836.h>
 
 /* PL011 UART registers and masks*/
 #define	UART_DR		0x00		/* Data register */
@@ -80,7 +81,8 @@
 	bus_space_write_4(b, o, v)
 
 /* UART base address for RPI2 */
-volatile uint32_t *uart_base = (unsigned int *)0x3f201000;
+volatile register_t *uart_base =
+	(register_t *)BMC2836_UART0;
 
 static __inline uint32_t
 bus_space_read_4(volatile uint32_t *base, u_long offset)
@@ -161,13 +163,13 @@ void
 uart_pl011_init(int baudrate, int databits, int stopbits,
     int parity)
 {
-	kprintf("Initialising PrimeCell UART (PL011)\n");
-
 	/* Mask all interrupts */
 	__uart_setreg(uart_base, UART_IMSC, __uart_getreg(uart_base, UART_IMSC) &
 	    ~IMSC_MASK_ALL);
 
 	uart_pl011_param(baudrate, databits, stopbits, parity);
+
+	kprintf("Initialising PrimeCell UART (PL011)\n");
 }
 
 void
