@@ -85,6 +85,16 @@ cp15_cntp_tval_set(register_t reg)
 	__asm __volatile("mcr p15, 0, %0, c14, c2, 0" :: "r" (reg));
 }
 
+static __inline register_t
+cp15_cntp_tval_get(void)
+{
+	register_t reg;
+
+	__asm __volatile("mrc p15, 0, %0, c14, c2, 0" : "=r" (reg));
+
+	return reg;
+}
+
 static __inline void
 cp15_cntv_tval_set(register_t reg)
 {
@@ -147,6 +157,16 @@ _read_cpsr(void)
 	__asm __volatile("mrs %0, cpsr" : "=r" (r));
 
 	return r;
+}
+
+static __inline register_t
+cp15_mpidr_get(void)
+{
+	register_t reg;
+
+	__asm __volatile("mrc p15, 0, %0, c0, c0, 5" : "=r" (reg));
+
+	return reg;
 }
 
 static __inline void

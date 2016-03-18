@@ -27,48 +27,17 @@
  * either expressed or implied, of the author.
  */
 
-#ifndef _BCM2836_H_
-#define _BCM2836_H_
+#include <types.h>
+#include <subr.h>
+#include <cpufunc.h>
 
-/* Interrupt controller */
-struct bcm2836_intc {
-	uint32_t irq_basic_pending;
-	uint32_t irq_1_pending;
-	uint32_t irq_2_pending;
-	uint32_t fiq_control;
-	uint32_t irq_1_enable;
-	uint32_t irq_2_enable;
-	uint32_t irq_basic_enable;
-	uint32_t irq_1_disable;
-	uint32_t irq_2_disable;
-	uint32_t irq_basic_disable;
-};
+int
+irq_handler(int arg)
+{
+	kprintf("irq handler source=0x%x\n", arg);
 
-extern volatile struct bcm2836_intc *bcm2836_intc;
-
-/* BCM2836 (Raspberry 2) addresses */
-#define BCM2836_PERIPH_BASE	0x3f000000
-#define BMC2836_UART0	(BCM2836_PERIPH_BASE + 0x00201000)
-
-#define BCM2836_LOCAL_TIMER_FREQ	19200000
-
-#define BCM2836_INTC_BASE		0x3f00b000
-
-#define BCM2836_LOCAL_PERIPH_BASE	0x40000000
-
-#define BCM2836_LOCAL_CTL_BASE		(BCM2836_LOCAL_PERIPH_BASE + 0x0000)
-#define BCM2836_CORE_TIMER_PRESCALER	(BCM2836_LOCAL_PERIPH_BASE + 0x0008)
-#define BCM2836_GPU_INT_ROUTING		(BCM2836_LOCAL_PERIPH_BASE + 0x000c)
-#define BCM2836_CORE_TIMER_LS32		(BCM2836_LOCAL_PERIPH_BASE + 0x001c)
-#define BCM2836_CORE_TIMER_MS32		(BCM2836_LOCAL_PERIPH_BASE + 0x0020)
-#define BCM2836_LOCAL_INT_ROUTING	(BCM2836_LOCAL_PERIPH_BASE + 0x0024)
-#define BCM2836_LOCAL_TIMER_CTL		(BCM2836_LOCAL_PERIPH_BASE + 0x0034)
-#define BCM2836_LOCAL_TIMER_WFLAGS	(BCM2836_LOCAL_PERIPH_BASE + 0x0038)
-
-#define BCM2836_CORE_INT_CTL(cpu)	((BCM2836_LOCAL_PERIPH_BASE + 0x0040) + (cpu * 4))
-
-
-/* Prototypes */
-void bcm2836_intc_print(void);
-
-#endif /* _BCM2836_H_ */
+	cp15_cntp_tval_set(0x20ce700);
+	cp15_cntp_ctl_set(1);
+	
+	return 0;
+}

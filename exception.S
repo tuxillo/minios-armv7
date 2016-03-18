@@ -35,9 +35,6 @@
 	.global _e_fiq
 
 _e_undef:
-	ldr r0, =undef_text
-	mov r1, lr
-	bl kprintf
 	bl .
 
 _e_svc:
@@ -57,21 +54,51 @@ _e_pref_abort:
 	bl .
 
 _e_data_abort:
-	bl .
-
-_e_irq:
-	ldr r0, =irq_text
+	ldr sp, =abtstack_top
+	ldr r0, =abt_text
 	mov r1, lr
+	mrc p15, 0, r2, c6, c0, 0
+	mrs r3, cpsr
 	bl kprintf
 	bl .
 
+_e_irq:
+	cpsid i			   @ Disable interrupts
+
+	cmp sp, #0x0		   @ Check if stack is null
+	ldreq sp, =irqstack_top	   @ Load stack top at init
+
+	stmfd sp!, {r0-r11}	   @ Save context
+
+	movw r4, #0x60		   @ Load core0 timer source
+	movt r4, #0x4000
+	ldr r0, [r4, #0]
+
+	msr cpsr_c, #0xd3	   @ Switch to svc mode
+	push {ip, lr}
+	bl irq_handler		   @ IRQ handler in svc mode
+	pop {ip,lr}
+
+	ldmfd sp!, {r0-r11}
+	cpsie i
+	bx lr
+
 _e_fiq:
+	ldr sp, =kernstack_top
+	ldr r0, =fiq_text
+	mov r1, lr 
+	bl kprintf
 	bl .
 
 syscall_text:
 	.asciz "[svc] Syscall %d used!\n"
-
 undef_text:
 	.asciz "[und] Undefined exception %p\n"
 irq_text:
-	.asciz "[irq] IRQ exception %p\n"
+	.asciz "[irq] IRQ exception core0=0x%x lr=0x%x cpsr=0x%x\n"
+fiq_text:
+	.asciz "[fiq] FIQ exception %p\n"
+pref_abort:
+	.asciz "pref abort %p\n"
+abt_text:
+	.asciz "[abt] data abort lr=0x%x dfar=0x%x cpsr=0x%x\n"

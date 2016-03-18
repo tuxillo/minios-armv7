@@ -31,6 +31,8 @@ OBJFILES+= user.o
 OBJFILES+= thread.o
 OBJFILES+= syscalls.o
 OBJFILES+= uart_pl011.o
+OBJFILES+= bcm2836.o
+OBJFILES+= core_intr.o
 
 boot.bin: boot.elf
 	$(OBJCOPY) -O binary boot.elf boot.bin
@@ -42,6 +44,8 @@ boot.elf: clean subr_prf.o boot.o startup.o user.o
 	$(CC) -c thread.c $(CFLAGS)
 	$(CC) -c syscalls.c $(CFLAGS)
 	$(CC) -c uart_pl011.c $(CFLAGS)
+	$(CC) -c bcm2836.c $(CFLAGS)
+	$(CC) -c core_intr.c $(CFLAGS)
 	$(AS) startup.S -o startup.o
 	$(AS) exception.S -o exception.o
 	$(LD) -T boot.ld -nodefaultlibs -nostdlib \
@@ -58,7 +62,7 @@ clean:
 	-rm -f boot.elf boot.bin kernel.img *.o
 
 run: boot.bin
-	qemu-system-arm -singlestep -D /tmp/t.log -d cpu,in_asm -serial stdio\
+	qemu-system-arm -singlestep -D /tmp/t.log -d cpu,in_asm,guest_errors,unimp -serial stdio\
                 -M raspi2 -m 256 -kernel \
                 boot.elf -display none
 

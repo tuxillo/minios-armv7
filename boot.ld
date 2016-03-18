@@ -37,6 +37,16 @@ SECTIONS
 	kernstack_top = .;
 	. = ALIGN(4);
 
+	irqstack_base = .;
+	. = . + 0x1000; /* 4kB for irq stack */
+	irqstack_top = .;
+	. = ALIGN(4);
+
+	abtstack_base = .;
+	. = . + 0x1000; /* 4kB for irq stack */
+	abtstack_top = .;
+	. = ALIGN(4);
+
 	usrstack_base = .;
 	. = . + 0x1000; /* 4kB for userland stack */
 	usrstack_top = .;

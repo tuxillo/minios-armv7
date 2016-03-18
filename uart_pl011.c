@@ -81,8 +81,7 @@
 	bus_space_write_4(b, o, v)
 
 /* UART base address for RPI2 */
-volatile register_t *uart_base =
-	(register_t *)BMC2836_UART0;
+volatile register_t *uart_base = (register_t *)BMC2836_UART0;
 
 static __inline uint32_t
 bus_space_read_4(volatile uint32_t *base, u_long offset)

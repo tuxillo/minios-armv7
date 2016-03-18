@@ -33,6 +33,7 @@
 #include <syscalls.h>
 #include <thread.h>
 #include <uart.h>
+#include <bcm2836.h>
 
 extern unsigned int *__bss_start;
 extern unsigned int *__bss_end;
@@ -89,6 +90,21 @@ proc2(void *arg)
 void
 kern_boot(void)
 {
+	int cnt = 0;
+	volatile register_t *irq_1 = (volatile register_t *)0x3f00b210;
+	volatile register_t *irq_2 = (volatile register_t *)0x3f00b214;
+	volatile register_t *irq_basic = (volatile register_t *)0x3f00b218;
+	volatile register_t *core0_irq = (volatile register_t *)0x40000040;
+	volatile register_t *core1_irq = (volatile register_t *)0x40000044;
+	volatile register_t *core2_irq = (volatile register_t *)0x40000048;
+	volatile register_t *core3_irq = (volatile register_t *)0x4000004c;
+	volatile register_t *prescaler = (volatile register_t *)0x4000008;
+	volatile register_t *core_tr1 = (volatile register_t *)0x400001c;
+	volatile register_t *core_tr2 = (volatile register_t *)0x4000020;
+	volatile register_t *core0_source = (volatile register_t *)0x40000060;
+
+	int i = 0;
+
 	kprintf("miniOS ARMv7 startup ...\n");
 
 	/* Startup */
@@ -100,11 +116,29 @@ kern_boot(void)
 	thread_create(proc1);
 	thread_create(proc2);
 
+	*prescaler = 0x2;
+
+	kprintf("prescaler=0x%x tr1=0x%x tr2=0x%x\n", *prescaler, *core_tr1, *core_tr2);
+
+	*core0_irq = 0x3;
+
 	enable_irq();
-	enable_fiq();
+
+	bcm2836_intc_print();
+
+	kprintf("core0 int control 0x%x 0x%x\n", *core0_irq, *core0_source);
+
+	cp15_cntp_tval_set(0x20ce700);
+	cp15_cntp_ctl_set(1);
+	kprintf("cp15_cntp_ctl_get: 0x%x\n", cp15_cntp_ctl_get());
+
+//	while((cp15_cntp_ctl_get() & (1<<2)) == 0)
+//		kprintf(".");
+
+	kprintf("Alarm! Wake up %x\n");
 
 	/* Run all user mode threads */
-	run_threads();
+	//run_threads();
 
 	/* Loop forever */
 	for (;;);

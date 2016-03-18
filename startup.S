@@ -63,6 +63,9 @@ _startup:
 	 */
 	mrc p15, 0, r0, c1, c0, 0	@ Read SCTLR into R0
 	bic r0, #(1 << 13)		@ Set SCTLR.V to 0
+	bic r0, #(1 << 12)		@ Set SCTLR.I to 0
+	bic r0, #(1 << 11)		@ Set SCTLR.Z to 0
+	bic r0, #(1 << 2)		@ Set SCTLR.C to 0
 	mcr p15, 0, r0, c1, c0, 0	@ Write SCTLR
 
 	/*
@@ -76,6 +79,9 @@ _startup:
 
 	/* Set kernel stack pointer */
 	ldr sp, =kernstack_top
+	ldr r0, =sctlr_text
+	mrc p15, 0, r1, c1, c0, 0
+	bl kprintf
 	bl kern_boot
 
 _gouser:
@@ -103,3 +109,5 @@ _swi:
 	msr spsr_c, #0x10	@ User mode for the exception return
 	mov lr, r0		@ Userland function to switch to
 	subs pc, lr, #0		@ Exception return
+sctlr_text:
+	.asciz "sctlr=0x%x\n"
