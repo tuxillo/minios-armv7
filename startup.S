@@ -79,9 +79,9 @@ _startup:
 
 	/* Set kernel stack pointer */
 	ldr sp, =kernstack_top
-	ldr r0, =sctlr_text
-	mrc p15, 0, r1, c1, c0, 0
-	bl kprintf
+//	ldr r0, =sctlr_text
+//	mrc p15, 0, r1, c1, c0, 0
+//	bl kprintf
 	bl kern_boot
 
 _gouser:

@@ -1,6 +1,8 @@
 # Makefile for minios-armv7
 TOOLCHAIN?= arm-none-eabi-
 
+REVISION=$(shell ./rev.sh)
+
 CC=${TOOLCHAIN}gcc
 LD=${TOOLCHAIN}ld
 AS=${TOOLCHAIN}as
@@ -15,6 +17,7 @@ OBJCOPY=${TOOLCHAIN}objcopy
 CFLAGS+= -mcpu=cortex-a7
 CFLAGS+= -marm
 CFLAGS+= -g -O0
+CFLAGS+= -DMINIOS_VERSION=\"$(REVISION)\"
 
 # Standalone, no libs no start objects.
 CFLAGS+= -I.

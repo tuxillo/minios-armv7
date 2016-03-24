@@ -63,49 +63,16 @@ void clearbss(void)
 
 }
 
-int
-proc1(void *arg)
+static void
+minios_startup_msg(void)
 {
-	for(;;) {
-		kprintf("[usr] running process 1\n");
-		syscall_entry(SYS_YIELD, NULL);
-		DELAY(1000000);
-		kprintf("[usr] again process 1\n");
-	}
-	return 0;
-}
-
-int
-proc2(void *arg)
-{
-	for(;;) {
-		kprintf("[usr] running process 2\n");
-		syscall_entry(SYS_YIELD, NULL);
-		DELAY(1000000);
-		kprintf("[usr] again process 2\n");
-	}
-	return 0;
+	kprintf("miniOS ARMv7-%s startup ...\n", MINIOS_VERSION);
 }
 
 void
 kern_boot(void)
 {
-	int cnt = 0;
-	volatile register_t *irq_1 = (volatile register_t *)0x3f00b210;
-	volatile register_t *irq_2 = (volatile register_t *)0x3f00b214;
-	volatile register_t *irq_basic = (volatile register_t *)0x3f00b218;
-	volatile register_t *core0_irq = (volatile register_t *)0x40000040;
-	volatile register_t *core1_irq = (volatile register_t *)0x40000044;
-	volatile register_t *core2_irq = (volatile register_t *)0x40000048;
-	volatile register_t *core3_irq = (volatile register_t *)0x4000004c;
-	volatile register_t *prescaler = (volatile register_t *)0x4000008;
-	volatile register_t *core_tr1 = (volatile register_t *)0x400001c;
-	volatile register_t *core_tr2 = (volatile register_t *)0x4000020;
-	volatile register_t *core0_source = (volatile register_t *)0x40000060;
-
-	int i = 0;
-
-	kprintf("miniOS ARMv7 startup ...\n");
+	minios_startup_msg();
 
 	/* Startup */
 	clearbss();
@@ -113,32 +80,12 @@ kern_boot(void)
 	/* Initialize UART */
 	uart_pl011_init(115200, 8, 1, 0);
 
-	thread_create(proc1);
-	thread_create(proc2);
-
-	*prescaler = 0x2;
-
-	kprintf("prescaler=0x%x tr1=0x%x tr2=0x%x\n", *prescaler, *core_tr1, *core_tr2);
-
-	*core0_irq = 0x3;
-
+	bcm2836_core_timer(0, CNTPSIRQ);
 	enable_irq();
-
-	bcm2836_intc_print();
-
-	kprintf("core0 int control 0x%x 0x%x\n", *core0_irq, *core0_source);
 
 	cp15_cntp_tval_set(0x20ce700);
 	cp15_cntp_ctl_set(1);
 	kprintf("cp15_cntp_ctl_get: 0x%x\n", cp15_cntp_ctl_get());
-
-//	while((cp15_cntp_ctl_get() & (1<<2)) == 0)
-//		kprintf(".");
-
-	kprintf("Alarm! Wake up %x\n");
-
-	/* Run all user mode threads */
-	//run_threads();
 
 	/* Loop forever */
 	for (;;);

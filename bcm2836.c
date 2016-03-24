@@ -72,3 +72,12 @@ bcm2836_intc_print(void)
 	kprintf("Disable Basic: %p 0x%x\n", &bcm2836_intc->irq_basic_disable,
 		bcm2836_intc->irq_basic_disable);
 }
+
+void
+bcm2836_core_timer(int cpu, uint32_t value)
+{
+	volatile uint32_t *addr =
+		(volatile uint32_t *)BCM2836_CORE_INT_CTL(cpu);
+
+	*addr = value;
+}

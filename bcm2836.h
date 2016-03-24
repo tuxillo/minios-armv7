@@ -67,8 +67,17 @@ extern volatile struct bcm2836_intc *bcm2836_intc;
 
 #define BCM2836_CORE_INT_CTL(cpu)	((BCM2836_LOCAL_PERIPH_BASE + 0x0040) + (cpu * 4))
 
+#define CNTPSIRQ	0x1
+#define CNTPNSIRQ	0x2
+#define CNTPHIRQ	0x4
+#define CNTPVIRQ	0x8
+#define CNTPSFIQ	0x10
+#define CNTPNSFIQ	0x20
+#define CNTPHFIQ	0x40
+#define CNTPVFIQ	0x80
 
 /* Prototypes */
 void bcm2836_intc_print(void);
+void bcm2836_core_timer(int, uint32_t);
 
 #endif /* _BCM2836_H_ */
